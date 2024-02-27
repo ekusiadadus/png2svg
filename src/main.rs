@@ -6,18 +6,18 @@ use clap::Parser;
 struct Args {
     /// Path to the PNG file
     #[arg(short, long)]
-    file_path: String,
+    input_path: String,
 
     /// Path to the SVG file
     #[arg(short, long)]
     output_path: String,
 
     /// Width of the SVG
-    #[arg(short, long, default_value_t = 100)]
+    #[arg(long, default_value_t = 100)]
     width: u32,
 
     /// Height of the SVG
-    #[arg(short, long, default_value_t = 100)]
+    #[arg(long, default_value_t = 100)]
     height: u32,
 }
 
@@ -67,22 +67,11 @@ fn create_svg_from_vectors(vectors: Vec<Vec<u8>>, width: u32, height: u32) -> St
 }
 
 fn main() {
-    // let args = Args::parse();
+    let args = Args::parse();
 
-    let input_path = "./input/shapieron.png";
-    let output_path = "./output/shapieron.svg";
-    let width = 100;
-    let height = 100;
+    let pixels = read_png_file(&args.input_path).unwrap();
+    let vectors = convert_pixels_to_vectors(pixels, args.width, args.height);
+    let svg = create_svg_from_vectors(vectors, args.width, args.height);
 
-    // let pixels = read_png_file(&args.file_path).unwrap();
-    // let vectors = convert_pixels_to_vectors(pixels, args.width, args.height);
-    // let svg = create_svg_from_vectors(vectors, args.width, args.height);
-
-    let pixels = read_png_file(input_path).unwrap();
-    let vectors = convert_pixels_to_vectors(pixels, width, height);
-    let svg = create_svg_from_vectors(vectors, width, height);
-
-    // std::fs::write(&args.output_path, svg).unwrap();
-
-    std::fs::write(output_path, svg).unwrap();
+    std::fs::write(&args.output_path, svg).unwrap();
 }
